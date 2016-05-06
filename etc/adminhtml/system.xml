@@ -3,7 +3,7 @@
         <tab id="magefox" translate="label" sortOrder="200">
             <label>Magento Fox</label>
         </tab>
-        <section id="magefox" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1"
+        <section id="magefoxgoogleshopping" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1"
                  showInStore="1">
             <label>Google Shopping</label>
             <tab>magefox</tab>
