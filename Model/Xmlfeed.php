@@ -1,8 +1,13 @@
 <?php
 
-namespace Magefox\GoogleShopping\Mode;
+use Magento\
+
+namespace Magefox\GoogleShopping\Model;
 
 class Xmlfeed
 {
-    
+    public function __construct()
+    {
+
+    }
 }
