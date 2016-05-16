@@ -5,16 +5,26 @@ namespace Magefox\GoogleShopping\Model;
 class Xmlfeed
 {
     /**
-     * XML Generator
+     * General Helper
      *
-     * @var \Magento\Framework\Xml\Generator
+     * @var \Magefox\GoogleShopping\Helper\Data
      */
-    private $productFeedHelper;
+    private $_helper;
+
+    /**
+     * Product Helper
+     *
+     * @var \Magefox\GoogleShopping\Helper\Products
+     */
+    private $_productFeedHelper;
 
     public function __construct(
+        \Magefox\GoogleShopping\Helper\Data $helper,
         \Magefox\GoogleShopping\Helper\Products $productFeedHelper
+
     ) {
-        $this->productFeedHelper = $productFeedHelper;
+        $this->_helper = $helper;
+        $this->_productFeedHelper = $productFeedHelper;
     }
 
     public function getFeed()
@@ -28,6 +38,7 @@ class Xmlfeed
 
     public function getXmlHeader()
     {
+        
         header("Content-Type: application/xml; charset=utf-8");
 
         $xml =  '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">';
@@ -37,6 +48,7 @@ class Xmlfeed
         $xml .= '<description>Store Name</description>';
 
         return $xml;
+
     }
 
     public function getXmlFooter()
@@ -46,7 +58,7 @@ class Xmlfeed
 
     public function getProductsXml()
     {
-        $productCollection = $this->productFeedHelper->getFilteredProducts();
+        $productCollection = $this->_productFeedHelper->getFilteredProducts();
         $xml = "";
 
         foreach ($productCollection as $product)
@@ -62,7 +74,7 @@ class Xmlfeed
         $xml = $this->createNode("title", $product->getName(), true);
         $xml .= $this->createNode("link", $product->getProductUrl());
         $xml .= $this->createNode("description", $product->getDescription(), true);
-        $xml .= $this->createNode("g:product_type", $this->productFeedHelper->getAttributeSet($product));
+        $xml .= $this->createNode("g:product_type", $this->_productFeedHelper->getAttributeSet($product));
 
 
         /*$xml .= "<g:image_link>".$product->getId()."</g:image_link>";
