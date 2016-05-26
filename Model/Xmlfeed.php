@@ -18,13 +18,22 @@ class Xmlfeed
      */
     private $_productFeedHelper;
 
+    /**
+     * Store Manager
+     *
+     * @var \Magefox\GoogleShopping\Helper\Products
+     */
+    private $_storeManager;
+
     public function __construct(
         \Magefox\GoogleShopping\Helper\Data $helper,
-        \Magefox\GoogleShopping\Helper\Products $productFeedHelper
+        \Magefox\GoogleShopping\Helper\Products $productFeedHelper,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
 
     ) {
         $this->_helper = $helper;
         $this->_productFeedHelper = $productFeedHelper;
+        $this->_storeManager = $storeManager;
     }
 
     public function getFeed()
@@ -75,10 +84,8 @@ class Xmlfeed
         $xml .= $this->createNode("link", $product->getProductUrl());
         $xml .= $this->createNode("description", $product->getDescription(), true);
         $xml .= $this->createNode("g:product_type", $this->_productFeedHelper->getAttributeSet($product));
-
-
-        /*$xml .= "<g:image_link>".$product->getId()."</g:image_link>";
-        $xml .= "<g:availability>".$product->getId()."</g:availability>";
+        $xml .= $this->createNode("g:image_link", $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, true).'catalog/product'.$product->getImage());
+        /*$xml .= "<g:availability>".$product->getId()."</g:availability>";
         $xml .= "<g:condition>".$product->getId()."</g:condition>";
         $xml .= "<g:id>".$product->getSku()."</g:id>";
         $xml .= "<g:brand>".$product->getId()."</g:brand>";

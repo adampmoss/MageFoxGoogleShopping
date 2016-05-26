@@ -41,4 +41,9 @@ class Products extends \Magento\Framework\App\Helper\AbstractHelper
         return $attributeSet->getAttributeSetName();
 
     }
+
+    public function getGoogleCategory()
+    {
+
+    }
 }
