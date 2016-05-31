@@ -85,6 +85,8 @@ class Xmlfeed
         $xml .= $this->createNode("description", $product->getDescription(), true);
         $xml .= $this->createNode("g:product_type", $this->_productFeedHelper->getAttributeSet($product));
         $xml .= $this->createNode("g:image_link", $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, true).'catalog/product'.$product->getImage());
+        $xml .= $this->createNode('g:google_product_category',
+            $this->_productFeedHelper->getProductValue($product, 'google_product_category'), true);
         /*$xml .= "<g:availability>".$product->getId()."</g:availability>";
         $xml .= "<g:condition>".$product->getId()."</g:condition>";
         $xml .= "<g:id>".$product->getSku()."</g:id>";

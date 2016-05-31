@@ -14,14 +14,21 @@ class Products extends \Magento\Framework\App\Helper\AbstractHelper
      */
     protected $_attributeSetRepo;
 
+    /**
+     * @var \Magefox\GoogleShopping\Helper\Data
+     */
+    protected $_helper;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
-        \Magento\Eav\Model\AttributeSetRepository $attributeSetRepo
+        \Magento\Eav\Model\AttributeSetRepository $attributeSetRepo,
+        \Magefox\GoogleShopping\Helper\Data $helper
     )
     {
         $this->_productCollectionFactory = $productCollectionFactory;
         $this->_attributeSetRepo = $attributeSetRepo;
+        $this->_helper = $helper;
         parent::__construct($context);
     }
 
@@ -29,7 +36,7 @@ class Products extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $collection = $this->_productCollectionFactory->create();
         $collection->addAttributeToSelect('*');
-        $collection->setPageSize(20);
+        $collection->setPageSize(200);
         return $collection;
     }
 
@@ -42,8 +49,21 @@ class Products extends \Magento\Framework\App\Helper\AbstractHelper
 
     }
 
-    public function getGoogleCategory()
+    public function getProductValue($product, $attributeCode)
     {
+        $attributeCodeFromConfig = $this->_helper->getConfig($attributeCode.'_attribute');
+        $defaultValue = $this->_helper->getConfig('default_'.$attributeCode);
 
+        if (!empty($attributeCodeFromConfig))
+        {
+            return $product->getAttributeText($attributeCodeFromConfig);
+        }
+
+        if (!empty($defaultValue))
+        {
+            return $defaultValue;
+        }
+
+        return false;
     }
 }
