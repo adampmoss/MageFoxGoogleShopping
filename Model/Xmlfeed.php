@@ -52,9 +52,9 @@ class Xmlfeed
 
         $xml =  '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">';
         $xml .= '<channel>';
-        $xml .= '<title>Store Name</title>';
-        $xml .= '<link>Base URL</link>';
-        $xml .= '<description>Store Name</description>';
+        $xml .= '<title>'.$this->_helper->getConfig('google_default_title').'</title>';
+        $xml .= '<link>'.$this->_helper->getConfig('google_default_url').'</link>';
+        $xml .= '<description>'.$this->_helper->getConfig('google_default_description').'</description>';
 
         return $xml;
 
