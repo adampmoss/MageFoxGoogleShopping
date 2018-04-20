@@ -47,14 +47,14 @@ class Xmlfeed
 
     public function getXmlHeader()
     {
-        
+
         header("Content-Type: application/xml; charset=utf-8");
 
         $xml =  '<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">';
         $xml .= '<channel>';
-        $xml .= '<title>Store Name</title>';
-        $xml .= '<link>Base URL</link>';
-        $xml .= '<description>Store Name</description>';
+        $xml .= '<title>'.$this->_helper->getConfig('google_default_title').'</title>';
+        $xml .= '<link>'.$this->_helper->getConfig('google_default_url').'</link>';
+        $xml .= '<description>'.$this->_helper->getConfig('google_default_description').'</description>';
 
         return $xml;
 
@@ -80,21 +80,38 @@ class Xmlfeed
 
     public function buildProductXml($product)
     {
+        $_description = $this->fixDescription($product->getDescription());
         $xml = $this->createNode("title", $product->getName(), true);
         $xml .= $this->createNode("link", $product->getProductUrl());
-        $xml .= $this->createNode("description", $product->getDescription(), true);
-        $xml .= $this->createNode("g:product_type", $this->_productFeedHelper->getAttributeSet($product));
+        $xml .= $this->createNode("description", $_description, true);
+        $xml .= $this->createNode("g:product_type", $this->_productFeedHelper->getAttributeSet($product), true);
         $xml .= $this->createNode("g:image_link", $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, true).'catalog/product'.$product->getImage());
         $xml .= $this->createNode('g:google_product_category',
             $this->_productFeedHelper->getProductValue($product, 'google_product_category'), true);
-        /*$xml .= "<g:availability>".$product->getId()."</g:availability>";
-        $xml .= "<g:condition>".$product->getId()."</g:condition>";
-        $xml .= "<g:id>".$product->getSku()."</g:id>";
-        $xml .= "<g:brand>".$product->getId()."</g:brand>";
-        $xml .= "<g:mpn>".$product->getId()."</g:mpn>";
-        $xml .= "<g:tax></g:tax>";*/
-        
+        $xml .= $this->createNode("g:availability", 'in stock');
+        $xml .= $this->createNode('g:price', number_format($product->getFinalPrice(),2,'.','').' '.$this->_productFeedHelper->getCurrentCurrencySymbol());
+        if ($product->getSpecialPrice() != $product->getFinalPrice())
+            $xml .= $this->createNode('g:sale_price', number_format($product->getSpecialPrice(),2,'.','').' '.$this->_productFeedHelper->getCurrentCurrencySymbol());
+        $_condition = $product->getAttributeText('condition');
+        if (is_array($_condition))
+            $xml .= $this->createNode("g:condition", $_condition[0]);
+        else
+            $xml .= $this->createNode("g:condition", $_condition);
+        $xml .= $this->createNode("g:gtin", $product->getAttributeText('gr_ean'));
+        $xml .= $this->createNode("g:id", $product->getId());
+        $xml .= $this->createNode("g:brand", $product->getAttributeText('manufacturer'));
+        $xml .= $this->createNode("g:mpn", $product->getSku());
+
         return $xml;
+    }
+
+    public function fixDescription($data)
+    {
+        $description = $data;
+        $encode = mb_detect_encoding($data);
+        $description = mb_convert_encoding($description, 'UTF-8', $encode);
+
+        return $description;
     }
 
     public function createNode($nodeName, $value, $cData = false)
